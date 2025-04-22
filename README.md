@@ -1,7 +1,6 @@
 
 ---
 
-```markdown
 # 📚 LearnTrack – Personal E-Learning Progress Tracker
 
 *A Student-Centric System for Tracking Self-Learning Progress*
@@ -119,7 +118,7 @@ learntrack/
 ├── database/            # SQL schema or migrations
 ├── docs/                # Project documentation (proposal, diagrams)
 └── README.md
-```
+
 
 ---
 
@@ -135,7 +134,5 @@ This project is for academic purposes under MIT License unless otherwise specifi
 
 ---
 
-```
 
----
 
