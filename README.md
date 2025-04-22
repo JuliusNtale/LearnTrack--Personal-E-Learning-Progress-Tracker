@@ -108,7 +108,7 @@
 
 ## 📂 Folder Structure Suggestion (Coming Soon in Repo)
 
-```bash
+
 learntrack/
 │
 ├── backend/             # Spring Boot backend
