@@ -108,7 +108,7 @@
 
 ## 📂 Folder Structure Suggestion (Coming Soon in Repo)
 
-
+```bash
 learntrack/
 │
 ├── backend/             # Spring Boot backend
@@ -119,7 +119,7 @@ learntrack/
 ├── docs/                # Project documentation (proposal, diagrams)
 └── README.md
 
-
+```
 ---
 
 ## 📬 Contributions & Feedback
