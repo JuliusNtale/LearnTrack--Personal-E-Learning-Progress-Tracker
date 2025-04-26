@@ -85,15 +85,15 @@
 
 ---
 
-## ⚙️ Technical Specifications
+## 🛠️ Tech Stack
+| **Area**       | **Technology**              |
+|----------------|----------------------------|
+| Frontend       | React.js + TypeScript       |
+| Backend        | Java Spring Boot            |
+| Database       | PostgreSQL                  |
+| Authentication | JWT + Spring Security       |
+| Deployment     | Heroku (Backend) + Vercel (Frontend) |
 
-| Component        | Technology           |
-|------------------|----------------------|
-| Frontend         | React.js *(or Thymeleaf for simplicity)* |
-| Backend          | Java + Spring Boot   |
-| Database         | PostgreSQL / MySQL   |
-| Authentication   | Spring Security      |
-| Deployment       | Docker *(optional)* / Heroku |
 
 ---
 
@@ -110,17 +110,68 @@
 
 ```bash
 learntrack/
+├── backend/                  # Spring Boot Backend
+│   ├── src/
+│   │   ├── main/
+│   │   │   ├── java/com/learntrack/
+│   │   │   │   ├── config/          # Security, CORS, etc.
+│   │   │   │   ├── controller/      # REST APIs
+│   │   │   │   ├── dto/             # Request/Response objects
+│   │   │   │   ├── exception/       # Custom error handling
+│   │   │   │   ├── model/           # JPA Entities
+│   │   │   │   ├── repository/      # JPA Repositories
+│   │   │   │   ├── service/         # Business logic
+│   │   │   │   ├── util/            # Helpers (PDF gen, email, etc.)
+│   │   │   │   └── LearnTrackApplication.java
+│   │   │   └── resources/
+│   │   │       ├── static/          # Certificates/badges templates
+│   │   │       ├── templates/       # Email templates (optional)
+│   │   │       └── application.properties
+│   │   └── test/                    # Unit tests
+│   ├── pom.xml                     # Maven dependencies
+│   └── Dockerfile                  # For containerization (optional)
 │
-├── backend/             # Spring Boot backend
-│   └── ...
-├── frontend/            # React or Thymeleaf frontend
-│   └── ...
-├── database/            # SQL schema or migrations
-├── docs/                # Project documentation (proposal, diagrams)
-└── README.md
+├── frontend/                 # React Frontend
+│   ├── public/
+│   │   ├── index.html
+│   │   └── assets/           # Favicons, default images
+│   ├── src/
+│   │   ├── api/              # Axios API calls
+│   │   ├── components/       # Reusable UI components
+│   │   ├── contexts/         # Auth/Theme contexts
+│   │   ├── pages/            # Main views
+│   │   ├── styles/           # Global CSS
+│   │   ├── types/            # TypeScript interfaces
+│   │   ├── utils/            # Helpers (date formatting, etc.)
+│   │   ├── App.tsx
+│   │   └── main.tsx
+│   ├── package.json
+│   ├── tsconfig.json
+│   └── Dockerfile            # For containerization (optional)
+│
+├── docs/                     # Project documentation
+│   ├── ER-Diagram.png        # Database schema
+│   ├── Architecture.png      # System design
+│   └── Proposal.pdf          # Original project plan
+│
+├── .gitignore                # Combined ignore rules
+├── README.md                 # Project overview (see below)
+└── LICENSE                   # MIT License
 
 ```
 ---
+
+## 🚀 Quick Start
+### Prerequisites
+- Java 17, Maven, Node.js 16+, PostgreSQL
+
+### Run Backend
+```bash
+cd backend
+mvn spring-boot:run
+```
+---
+
 
 ## 📬 Contributions & Feedback
 

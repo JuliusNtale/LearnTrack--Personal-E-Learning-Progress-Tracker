@@ -1,0 +1,35 @@
+
+
+---
+
+### **🚫 .gitignore**
+```gitignore
+# Backend (Java/Spring)
+backend/target/
+backend/.settings/
+backend/.classpath
+backend/.project
+backend/.spring-beans
+backend/*.iml
+
+# Frontend (React)
+frontend/node_modules/
+frontend/.env
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+frontend/dist/
+frontend/build/
+frontend/.DS_Store
+
+# IDE
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# System
+.DS_Store
+Thumbs.db
