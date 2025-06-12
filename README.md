@@ -87,10 +87,10 @@
 
 ## 🛠️ Tech Stack
 | **Area**       | **Technology**              |
-|----------------|----------------------------|
-| Frontend       | React.js + TypeScript       |
+|----------------|-----------------------------|
+| Frontend       | Themelead & HTML            |
 | Backend        | Java Spring Boot            |
-| Database       | PostgreSQL                  |
+| Database       | Mysql Server                |
 | Authentication | JWT + Spring Security       |
 | Deployment     | Heroku (Backend) + Vercel (Frontend) |
 
@@ -110,53 +110,205 @@
 
 ```bash
 learntrack/
-├── backend/                  # Spring Boot Backend
-│   ├── src/
-│   │   ├── main/
-│   │   │   ├── java/com/learntrack/
-│   │   │   │   ├── config/          # Security, CORS, etc.
-│   │   │   │   ├── controller/      # REST APIs
-│   │   │   │   ├── dto/             # Request/Response objects
-│   │   │   │   ├── exception/       # Custom error handling
-│   │   │   │   ├── model/           # JPA Entities
-│   │   │   │   ├── repository/      # JPA Repositories
-│   │   │   │   ├── service/         # Business logic
-│   │   │   │   ├── util/            # Helpers (PDF gen, email, etc.)
-│   │   │   │   └── LearnTrackApplication.java
-│   │   │   └── resources/
-│   │   │       ├── static/          # Certificates/badges templates
-│   │   │       ├── templates/       # Email templates (optional)
-│   │   │       └── application.properties
-│   │   └── test/                    # Unit tests
-│   ├── pom.xml                     # Maven dependencies
-│   └── Dockerfile                  # For containerization (optional)
-│
-├── frontend/                 # React Frontend
-│   ├── public/
-│   │   ├── index.html
-│   │   └── assets/           # Favicons, default images
-│   ├── src/
-│   │   ├── api/              # Axios API calls
-│   │   ├── components/       # Reusable UI components
-│   │   ├── contexts/         # Auth/Theme contexts
-│   │   ├── pages/            # Main views
-│   │   ├── styles/           # Global CSS
-│   │   ├── types/            # TypeScript interfaces
-│   │   ├── utils/            # Helpers (date formatting, etc.)
-│   │   ├── App.tsx
-│   │   └── main.tsx
-│   ├── package.json
-│   ├── tsconfig.json
-│   └── Dockerfile            # For containerization (optional)
-│
-├── docs/                     # Project documentation
-│   ├── ER-Diagram.png        # Database schema
-│   ├── Architecture.png      # System design
-│   └── Proposal.pdf          # Original project plan
-│
-├── .gitignore                # Combined ignore rules
-├── README.md                 # Project overview (see below)
-└── LICENSE                   # MIT License
+E:.
+¦   .gitattributes
+¦   .gitignore
+¦   folder-structure.txt
+¦   LICENSE
+¦   pom.xml
+¦   README.md
+¦   
++---.idea
+¦       .gitignore
+¦       compiler.xml
+¦       encodings.xml
+¦       jarRepositories.xml
+¦       misc.xml
+¦       vcs.xml
+¦       workspace.xml
+¦       
++---.mvn
++---docs
+¦       Architecture.png
+¦       ER-Diagram.png
+¦       Proposal.pdf
+¦       
++---src
+¦   +---main
+¦   ¦   +---java
+¦   ¦   ¦   +---com
+¦   ¦   ¦       +---hextech
+¦   ¦   ¦           +---learntrack
+¦   ¦   ¦               ¦   LearnTrackApplication.java
+¦   ¦   ¦               ¦   
+¦   ¦   ¦               +---controller
+¦   ¦   ¦               ¦       AdminController.java
+¦   ¦   ¦               ¦       AuthController.java
+¦   ¦   ¦               ¦       CourseController.java
+¦   ¦   ¦               ¦       DashboardController.java
+¦   ¦   ¦               ¦       
+¦   ¦   ¦               +---exception
+¦   ¦   ¦               ¦       ProgressTrackingException.java
+¦   ¦   ¦               ¦       
+¦   ¦   ¦               +---model
+¦   ¦   ¦               ¦       Assignment.java
+¦   ¦   ¦               ¦       AssignmentSubmission.java
+¦   ¦   ¦               ¦       Course.java
+¦   ¦   ¦               ¦       Enrollment.java
+¦   ¦   ¦               ¦       Lesson.java
+¦   ¦   ¦               ¦       LessonProgress.java
+¦   ¦   ¦               ¦       Module.java
+¦   ¦   ¦               ¦       User.java
+¦   ¦   ¦               ¦       
+¦   ¦   ¦               +---repository
+¦   ¦   ¦               ¦       AssignmentRepository.java
+¦   ¦   ¦               ¦       AssignmentSubmissionRepository.java
+¦   ¦   ¦               ¦       CourseRepository.java
+¦   ¦   ¦               ¦       EnrollmentRepository.java
+¦   ¦   ¦               ¦       LessonProgressRepository.java
+¦   ¦   ¦               ¦       LessonRepository.java
+¦   ¦   ¦               ¦       ModuleRepository.java
+¦   ¦   ¦               ¦       UserRepository.java
+¦   ¦   ¦               ¦       
+¦   ¦   ¦               +---security
+¦   ¦   ¦               ¦       CustomUserDetails.java
+¦   ¦   ¦               ¦       SecurityConfig.java
+¦   ¦   ¦               ¦       
+¦   ¦   ¦               +---service
+¦   ¦   ¦                       AssignmentService.java
+¦   ¦   ¦                       CourseService.java
+¦   ¦   ¦                       EmailService.java
+¦   ¦   ¦                       EnrollmentService.java
+¦   ¦   ¦                       LessonService.java
+¦   ¦   ¦                       ModuleService.java
+¦   ¦   ¦                       ProgressService.java
+¦   ¦   ¦                       SubmissionService.java
+¦   ¦   ¦                       UserService.java
+¦   ¦   ¦                       
+¦   ¦   +---resources
+¦   ¦       ¦   application.properties
+¦   ¦       ¦   message.properties
+¦   ¦       ¦   
+¦   ¦       +---static
+¦   ¦       +---templates
+¦   ¦           ¦   dashboard.html
+¦   ¦           ¦   
+¦   ¦           +---admin
+¦   ¦           ¦       users.html
+¦   ¦           ¦       
+¦   ¦           +---assignments
+¦   ¦           ¦       create.html
+¦   ¦           ¦       view.html
+¦   ¦           ¦       
+¦   ¦           +---auth
+¦   ¦           ¦       login.html
+¦   ¦           ¦       register.html
+¦   ¦           ¦       
+¦   ¦           +---courses
+¦   ¦           ¦       create.html
+¦   ¦           ¦       view.html
+¦   ¦           ¦       
+¦   ¦           +---fragments
+¦   ¦           ¦       navbar.html
+¦   ¦           ¦       
+¦   ¦           +---lessons
+¦   ¦           ¦       create.html
+¦   ¦           ¦       
+¦   ¦           +---modules
+¦   ¦                   create.html
+¦   ¦                   view.html
+¦   ¦                   
+¦   +---test
+¦       +---java
++---target
+    +---classes
+    ¦   ¦   application.properties
+    ¦   ¦   message.properties
+    ¦   ¦   
+    ¦   +---com
+    ¦   ¦   +---hextech
+    ¦   ¦       +---learntrack
+    ¦   ¦           ¦   LearnTrackApplication.class
+    ¦   ¦           ¦   
+    ¦   ¦           +---controller
+    ¦   ¦           ¦       AdminController.class
+    ¦   ¦           ¦       AuthController.class
+    ¦   ¦           ¦       CourseController.class
+    ¦   ¦           ¦       DashboardController.class
+    ¦   ¦           ¦       
+    ¦   ¦           +---exception
+    ¦   ¦           ¦       ProgressTrackingException.class
+    ¦   ¦           ¦       
+    ¦   ¦           +---model
+    ¦   ¦           ¦       Assignment.class
+    ¦   ¦           ¦       AssignmentSubmission.class
+    ¦   ¦           ¦       Course.class
+    ¦   ¦           ¦       Enrollment.class
+    ¦   ¦           ¦       Lesson.class
+    ¦   ¦           ¦       LessonProgress$LessonProgressBuilder.class
+    ¦   ¦           ¦       LessonProgress.class
+    ¦   ¦           ¦       Module.class
+    ¦   ¦           ¦       User.class
+    ¦   ¦           ¦       
+    ¦   ¦           +---repository
+    ¦   ¦           ¦       AssignmentRepository.class
+    ¦   ¦           ¦       AssignmentSubmissionRepository.class
+    ¦   ¦           ¦       CourseRepository.class
+    ¦   ¦           ¦       EnrollmentRepository.class
+    ¦   ¦           ¦       LessonProgressRepository.class
+    ¦   ¦           ¦       LessonRepository.class
+    ¦   ¦           ¦       ModuleRepository.class
+    ¦   ¦           ¦       UserRepository.class
+    ¦   ¦           ¦       
+    ¦   ¦           +---security
+    ¦   ¦           ¦       CustomUserDetails.class
+    ¦   ¦           ¦       SecurityConfig.class
+    ¦   ¦           ¦       
+    ¦   ¦           +---service
+    ¦   ¦                   AssignmentService.class
+    ¦   ¦                   CourseService.class
+    ¦   ¦                   EmailService.class
+    ¦   ¦                   EnrollmentService.class
+    ¦   ¦                   LessonService.class
+    ¦   ¦                   ModuleService.class
+    ¦   ¦                   ProgressService.class
+    ¦   ¦                   SubmissionService.class
+    ¦   ¦                   UserService.class
+    ¦   ¦                   
+    ¦   +---templates
+    ¦       ¦   dashboard.html
+    ¦       ¦   
+    ¦       +---admin
+    ¦       ¦       users.html
+    ¦       ¦       
+    ¦       +---assignments
+    ¦       ¦       create.html
+    ¦       ¦       view.html
+    ¦       ¦       
+    ¦       +---auth
+    ¦       ¦       login.html
+    ¦       ¦       register.html
+    ¦       ¦       
+    ¦       +---courses
+    ¦       ¦       create.html
+    ¦       ¦       view.html
+    ¦       ¦       
+    ¦       +---fragments
+    ¦       ¦       navbar.html
+    ¦       ¦       
+    ¦       +---lessons
+    ¦       ¦       create.html
+    ¦       ¦       
+    ¦       +---modules
+    ¦               create.html
+    ¦               view.html
+    ¦               
+    +---generated-sources
+    ¦   +---annotations
+    +---generated-test-sources
+    ¦   +---test-annotations
+    +---test-classes
+
 
 ```
 ---
