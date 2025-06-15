@@ -1,4 +1,3 @@
-// CourseService.java
 package com.hextech.learntrack.service;
 
 import com.hextech.learntrack.model.Course;
@@ -6,13 +5,20 @@ import com.hextech.learntrack.model.User;
 import com.hextech.learntrack.repository.CourseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class CourseService {
+    private final CourseRepository courseRepository;
+
     @Autowired
-    private CourseRepository courseRepository;
+    public CourseService(CourseRepository courseRepository) {
+        this.courseRepository = courseRepository;
+    }
 
     public Course createCourse(Course course) {
         return courseRepository.save(course);
@@ -40,5 +46,17 @@ public class CourseService {
 
     public void deleteCourse(Long id) {
         courseRepository.deleteById(id);
+    }
+
+    public long countAllCourses() {
+        return courseRepository.count();
+    }
+
+    public List<Course> getAllCourses() {
+        return courseRepository.findAll();
+    }
+
+    public List<Course> searchCourses(String query) {
+        return courseRepository.searchByTitleOrDescription(query);
     }
 }

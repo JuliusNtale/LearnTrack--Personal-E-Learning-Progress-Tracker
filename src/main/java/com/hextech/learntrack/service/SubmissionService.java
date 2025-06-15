@@ -3,6 +3,8 @@ package com.hextech.learntrack.service;
 import com.hextech.learntrack.model.*;
 import com.hextech.learntrack.repository.AssignmentSubmissionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,26 +23,15 @@ public class SubmissionService {
     }
 
     public AssignmentSubmission submitAssignment(User user, Assignment assignment, String filePath, String comments) {
-        if (user == null || assignment == null) {
-            throw new IllegalArgumentException("User and Assignment cannot be null");
-        }
+        validateSubmissionInput(user, assignment);
 
         return submissionRepository.findByUserAndAssignment(user, assignment)
-                .map(existingSubmission -> {
-                    existingSubmission.setFilePath(filePath);
-                    existingSubmission.setComments(comments);
-                    existingSubmission.setSubmissionDate(new Date());
-                    return submissionRepository.save(existingSubmission);
-                })
-                .orElseGet(() -> {
-                    AssignmentSubmission newSubmission = new AssignmentSubmission();
-                    newSubmission.setUser(user);
-                    newSubmission.setAssignment(assignment);
-                    newSubmission.setFilePath(filePath);
-                    newSubmission.setComments(comments);
-                    newSubmission.setSubmissionDate(new Date());
-                    return submissionRepository.save(newSubmission);
-                });
+                .map(existing -> updateSubmission(existing, filePath, comments))
+                .orElseGet(() -> createNewSubmission(user, assignment, filePath, comments));
+    }
+
+    public List<AssignmentSubmission> getRecentSubmissionsByUser(User user, int limit) {
+        return submissionRepository.getRecentSubmissionsByUser(user, limit);
     }
 
     public AssignmentSubmission gradeSubmission(Long submissionId, Integer grade, String feedback) {
@@ -51,8 +42,8 @@ public class SubmissionService {
         AssignmentSubmission submission = submissionRepository.findById(submissionId)
                 .orElseThrow(() -> new RuntimeException("Submission not found with id: " + submissionId));
 
-        if (grade != null && grade < 0) {
-            throw new IllegalArgumentException("Grade cannot be negative");
+        if (grade != null && (grade < 0 || grade > submission.getAssignment().getMaxPoints())) {
+            throw new IllegalArgumentException("Invalid grade value");
         }
 
         submission.setGrade(grade);
@@ -60,42 +51,46 @@ public class SubmissionService {
         return submissionRepository.save(submission);
     }
 
-    @Transactional(readOnly = true)
-    public List<AssignmentSubmission> getSubmissionsByUser(User user) {
-        if (user == null) {
-            throw new IllegalArgumentException("User cannot be null");
-        }
-        return submissionRepository.findByUser(user);
+    public Page<AssignmentSubmission> getSubmissionsByAssignment(Assignment assignment, Pageable pageable) {
+        return submissionRepository.findByAssignmentOrderBySubmissionDateDesc(assignment, pageable);
     }
 
-    @Transactional(readOnly = true)
-    public List<AssignmentSubmission> getSubmissionsByAssignment(Assignment assignment) {
-        if (assignment == null) {
-            throw new IllegalArgumentException("Assignment cannot be null");
-        }
-        return submissionRepository.findByAssignment(assignment);
-    }
-
-    @Transactional(readOnly = true)
-    public Optional<AssignmentSubmission> getSubmissionByUserAndAssignment(User user, Assignment assignment) {
-        if (user == null || assignment == null) {
-            throw new IllegalArgumentException("User and Assignment cannot be null");
-        }
-        return submissionRepository.findByUserAndAssignment(user, assignment);
-    }
-
-    @Transactional(readOnly = true)
     public Optional<AssignmentSubmission> getSubmissionById(Long id) {
-        if (id == null) {
-            throw new IllegalArgumentException("ID cannot be null");
-        }
         return submissionRepository.findById(id);
     }
 
+    public List<AssignmentSubmission> getSubmissionsByUser(User user) {
+        return submissionRepository.findByUser(user);
+    }
+
+    public Optional<AssignmentSubmission> getSubmissionByUserAndAssignment(User user, Assignment assignment) {
+        return submissionRepository.findByUserAndAssignment(user, assignment);
+    }
+
     public void deleteSubmission(Long submissionId) {
-        if (submissionId == null) {
-            throw new IllegalArgumentException("Submission ID cannot be null");
-        }
         submissionRepository.deleteById(submissionId);
+    }
+
+    private AssignmentSubmission createNewSubmission(User user, Assignment assignment, String filePath, String comments) {
+        AssignmentSubmission submission = new AssignmentSubmission();
+        submission.setUser(user);
+        submission.setAssignment(assignment);
+        submission.setFilePath(filePath);
+        submission.setComments(comments);
+        submission.setSubmissionDate(new Date());
+        return submissionRepository.save(submission);
+    }
+
+    private AssignmentSubmission updateSubmission(AssignmentSubmission submission, String filePath, String comments) {
+        submission.setFilePath(filePath);
+        submission.setComments(comments);
+        submission.setSubmissionDate(new Date());
+        return submissionRepository.save(submission);
+    }
+
+    private void validateSubmissionInput(User user, Assignment assignment) {
+        if (user == null || assignment == null) {
+            throw new IllegalArgumentException("User and Assignment cannot be null");
+        }
     }
 }

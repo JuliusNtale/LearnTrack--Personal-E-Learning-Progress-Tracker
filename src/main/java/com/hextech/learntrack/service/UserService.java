@@ -42,6 +42,10 @@ public class UserService implements UserDetailsService {
         return userRepository.existsByEmail(email);
     }
 
+    public long countByRole(String role) {
+        return userRepository.countByRole(role);
+    }
+
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }

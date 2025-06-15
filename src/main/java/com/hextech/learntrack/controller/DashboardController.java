@@ -8,35 +8,60 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Controller
 public class DashboardController {
-    @Autowired
-    private CourseService courseService;
+    private final CourseService courseService;
+    private final EnrollmentService enrollmentService;
+    private final ProgressService progressService;
+    private final SubmissionService submissionService;
+    private final UserService userService;
 
     @Autowired
-    private EnrollmentService enrollmentService;
-
-    @Autowired
-    private ProgressService progressService;
-
-    @Autowired
-    private SubmissionService submissionService;
+    public DashboardController(CourseService courseService,
+                               EnrollmentService enrollmentService,
+                               ProgressService progressService,
+                               SubmissionService submissionService,
+                               UserService userService) {
+        this.courseService = courseService;
+        this.enrollmentService = enrollmentService;
+        this.progressService = progressService;
+        this.submissionService = submissionService;
+        this.userService = userService;
+    }
 
     @GetMapping("/dashboard")
     public String showDashboard(@AuthenticationPrincipal User user, Model model) {
         model.addAttribute("user", user);
 
-        // For students: show enrolled courses
         if (user.getRole().equals("STUDENT")) {
             model.addAttribute("enrollments", enrollmentService.getEnrollmentsByUser(user));
-            model.addAttribute("submissions", submissionService.getSubmissionsByUser(user));
+            model.addAttribute("submissions", submissionService.getRecentSubmissionsByUser(user, 5));
+            model.addAttribute("progressStats", progressService.getUserProgressStats(user));
+            model.addAttribute("timeSpent", progressService.getWeeklyTimeSpent(user));
+            model.addAttribute("timeDistribution", progressService.getTimeDistributionByCourse(user));
+            model.addAttribute("recentActivities", progressService.getRecentLearningActivities(user, 5));
         }
-
-        // For instructors: show created courses
-        if (user.getRole().equals("ADMIN")) {
-            model.addAttribute("templates/courses", courseService.getCoursesByUser(user));
+        else if (user.getRole().equals("ADMIN")) {
+            model.addAttribute("courses", courseService.getCoursesByUser(user));
+            model.addAttribute("studentCount", userService.countByRole("STUDENT"));
+            model.addAttribute("courseStats", getCourseStatistics());
         }
 
         return "dashboard";
+    }
+
+    private Map<String, Object> getCourseStatistics() {
+        Map<String, Object> stats = new HashMap<>();
+        stats.put("activeCourses", courseService.countAllCourses());
+        stats.put("avgCompletion", calculateAverageCourseCompletion());
+        return stats;
+    }
+
+    private int calculateAverageCourseCompletion() {
+        // Implementation depends on your business logic
+        return 65; // Example value
     }
 }
