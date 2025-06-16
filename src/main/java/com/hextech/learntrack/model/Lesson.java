@@ -23,6 +23,9 @@ public class Lesson {
     @Column(nullable = false)
     private String lessonType; // VIDEO, READING, QUIZ, ASSIGNMENT
 
+    @Column(nullable = false)
+    private int durationMinutes; // Add this field to match SQL
+
     @Column
     private String videoUrl;
 

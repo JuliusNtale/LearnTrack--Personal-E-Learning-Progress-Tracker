@@ -92,6 +92,14 @@ public class DashboardController {
         model.addAttribute("courses", courseService.getCoursesByUser(user));
         model.addAttribute("studentCount", userService.countByRole("STUDENT"));
         model.addAttribute("courseStats", getCourseStatistics());
+
+        // Add empty student-specific attributes to prevent template errors
+        model.addAttribute("enrollments", null);
+        model.addAttribute("submissions", null);
+        model.addAttribute("progressStats", null);
+        model.addAttribute("timeSpent", null);
+        model.addAttribute("timeDistribution", null);
+        model.addAttribute("recentActivities", null);
     }
 
     private Map<String, Object> getCourseStatistics() {
@@ -105,4 +113,5 @@ public class DashboardController {
         // Default implementation - replace with your actual calculation
         return 65;
     }
+
 }

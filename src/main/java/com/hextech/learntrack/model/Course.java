@@ -7,7 +7,7 @@ import java.util.*;
 
 @Entity
 @Data
-@Table(name = "templates/courses")
+@Table(name = "courses")
 public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,7 +20,7 @@ public class Course {
     private String description;
 
     @Column(nullable = false)
-    private String category;
+    private String category  = "GENERAL";
 
     @Column(nullable = false)
     private String level;
