@@ -1,5 +1,6 @@
 package com.hextech.learntrack.controller;
 
+import com.hextech.learntrack.exception.ResourceNotFoundException;
 import com.hextech.learntrack.model.*;
 import com.hextech.learntrack.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -58,27 +60,36 @@ public class CourseController {
     public String viewCourse(@AuthenticationPrincipal User user,
                              @PathVariable Long id,
                              Model model) {
-        Course course = courseService.getCourseById(id).orElseThrow();
+        Course course = courseService.getCourseById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Course not found"));
+
         model.addAttribute("course", course);
+        model.addAttribute("modules", moduleService.getModulesByCourse(course));
 
         if (user.getRole().equals("STUDENT")) {
-            Enrollment enrollment = enrollmentService.getEnrollmentByUserAndCourse(user, course)
-                    .orElse(null);
-            model.addAttribute("enrollment", enrollment);
-            model.addAttribute("isEnrolled", enrollment != null);
+            Optional<Enrollment> enrollment = enrollmentService.getEnrollmentByUserAndCourse(user, course);
+            model.addAttribute("enrollment", enrollment.orElse(null));
+            model.addAttribute("isEnrolled", enrollment.isPresent());
+
+            if (enrollment.isPresent()) {
+                Map<Long, Double> lessonProgress = progressService.getLessonProgress(user, course);
+                model.addAttribute("lessonProgress", lessonProgress);
+            }
         }
 
-        model.addAttribute("modules", moduleService.getModulesByCourse(course));
         return "courses/view";
     }
 
     @GetMapping("/{id}/enroll")
     public String enrollInCourse(@AuthenticationPrincipal User user,
                                  @PathVariable Long id) {
-        Course course = courseService.getCourseById(id).orElseThrow();
+        Course course = courseService.getCourseById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Course not found"));
+
         if (!enrollmentService.isUserEnrolled(user, course)) {
             enrollmentService.enrollUser(user, course);
         }
+
         return "redirect:/courses/" + id;
     }
 
@@ -209,6 +220,8 @@ public class CourseController {
             throw new RuntimeException("Could not read file: " + file);
         }
     }
+
+
 
     @PostMapping("/{courseId}/assignments/{assignmentId}/submit")
     public String submitAssignment(@AuthenticationPrincipal User user,

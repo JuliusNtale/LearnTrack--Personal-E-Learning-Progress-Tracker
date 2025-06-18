@@ -45,6 +45,23 @@ public class LessonProgress {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Transient
+    public User getUser() {
+        return this.enrollment != null ? this.enrollment.getUser() : null;
+    }
+
+    @Transient
+    public Course getCourse() {
+        return this.lesson != null ? this.lesson.getModule().getCourse() : null;
+    }
+
     @Version
     private int version;
+
+
+    // Add this method to calculate completion percentage
+    public double getCompletionPercentage() {
+        // For simple binary completion (0% or 100%)
+        return this.completed ? 100.0 : 0.0;
+    }
 }

@@ -278,79 +278,123 @@
         <!-- Main Content -->
         <div class="col-lg-9">
             <!-- Courses Section -->
-            <div class="card mb-4">
-                <div class="card-header d-flex justify-content-between align-items-center bg-primary text-white">
-                    <h5 class="mb-0 d-flex align-items-center">
-                        <i class="bi me-2" th:classappend="${user.role == 'STUDENT'} ? 'bi-journal-bookmark' : 'bi-journal-plus'"></i>
-                        <span th:text="${user.role == 'STUDENT' ? 'My Courses' : 'My Created Courses'}"></span>
-                    </h5>
-                    <a th:href="@{/courses}" class="btn btn-sm btn-light">
-                        <i class="bi bi-arrow-right me-1"></i>View All
-                    </a>
-                </div>
-                <div class="card-body">
-                    <div th:if="${user.role == 'STUDENT'}">
-                        <div th:if="${enrollments.empty}" class="alert alert-info mb-0">
-                            <i class="bi bi-info-circle me-2"></i>
-                            You are not enrolled in any courses yet. <a th:href="@{/courses}" class="alert-link">Browse available courses</a>
-                        </div>
-                        <div class="row row-cols-1 row-cols-md-2 g-4" th:unless="${enrollments.empty}">
-                            <div th:each="enrollment : ${enrollments}" class="col">
-                                <div class="card h-100 progress-card">
-                                    <div class="card-body d-flex flex-column">
-                                        <div class="d-flex justify-content-between align-items-start mb-2">
-                                            <h5 class="card-title mb-0" th:text="${enrollment.course.title}"></h5>
-                                            <span class="badge bg-info rounded-pill" th:text="${enrollment.course.level}"></span>
-                                        </div>
-                                        <p class="card-text text-muted small mb-3" th:text="${enrollment.course.shortDescription ?: enrollment.course.description}"></p>
-                                        <div class="mb-3">
-                                            <div class="d-flex justify-content-between small text-muted mb-1">
-                                                <span>Progress</span>
-                                                <span th:text="${enrollment.progress} + '%'"></span>
-                                            </div>
-                                            <div class="progress" style="height: 8px;">
-                                                <div class="progress-bar" role="progressbar"
-                                                     th:style="'width: ' + ${enrollment.progress} + '%;'"
-                                                     th:classappend="${enrollment.progress == 100} ? 'bg-success' : 'bg-primary'"
-                                                     th:attr="aria-valuenow=${enrollment.progress}"
-                                                     aria-valuemin="0" aria-valuemax="100"></div>
-                                            </div>
-                                        </div>
-                                        <div class="d-flex justify-content-between align-items-center mt-auto">
-                                            <a th:href="@{'/courses/' + ${enrollment.course.id}}" class="btn btn-sm btn-outline-primary">
-                                                <i class="bi" th:classappend="${enrollment.progress == 0} ? 'bi-play' : 'bi-arrow-right'"></i>
-                                                <span th:text="${enrollment.progress == 0} ? 'Start' : 'Continue'"></span>
-                                            </a>
-                                            <small class="text-muted" th:text="${enrollment.course.modules.size()} + ' modules'"></small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+            <div class="col-lg-9">
+                <!-- Updated Courses Section -->
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center bg-primary text-white">
+                        <h5 class="mb-0 d-flex align-items-center">
+                            <i class="bi me-2" th:classappend="${user.role == 'STUDENT'} ? 'bi-journal-bookmark' : 'bi-journal-plus'"></i>
+                            <span th:text="${user.role == 'STUDENT' ? 'My Courses' : 'My Created Courses'}"></span>
+                        </h5>
+                        <a th:href="@{/courses}" class="btn btn-sm btn-light">
+                            <i class="bi bi-arrow-right me-1"></i>View All
+                        </a>
                     </div>
+                    <div class="card-body">
+                        <!-- Student View -->
+                        <div th:if="${user.role == 'STUDENT'}">
+                            <div th:if="${enrollments.empty}" class="alert alert-info mb-0">
+                                <i class="bi bi-info-circle me-2"></i>
+                                You are not enrolled in any courses yet.
+                                <a th:href="@{/courses}" class="alert-link">Browse available courses</a>
+                            </div>
 
-                    <div th:if="${user.role == 'ADMIN'}">
-                        <div th:if="${courses.empty}" class="alert alert-info mb-0">
-                            <i class="bi bi-info-circle me-2"></i>
-                            You haven't created any courses yet.
-                            <a th:href="@{/courses/create}" class="alert-link">Create your first course</a>
+                            <div class="row row-cols-1 row-cols-md-2 g-4" th:unless="${enrollments.empty}">
+                                <div th:each="enrollment : ${enrollments}" class="col">
+                                    <div class="card h-100 progress-card shadow-sm">
+                                        <!-- Make entire card clickable while keeping button functionality -->
+                                        <a th:href="@{'/courses/' + ${enrollment.course.id}}" class="text-decoration-none text-dark stretched-link">
+                                            <div class="card-body d-flex flex-column">
+                                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                                    <h5 class="card-title mb-0" th:text="${enrollment.course.title}"></h5>
+                                                    <span class="badge bg-info rounded-pill"
+                                                          th:text="${enrollment.course.level}"
+                                                          th:classappend="${enrollment.course.level == 'Advanced'} ? 'bg-danger' :
+                                                                          ${enrollment.course.level == 'Intermediate'} ? 'bg-warning text-dark' : 'bg-info'">
+                                                    </span>
+                                                </div>
+
+                                                <p class="card-text text-muted small mb-3"
+                                                   th:text="${enrollment.course.shortDescription ?: #strings.abbreviate(enrollment.course.description, 100)}">
+                                                </p>
+
+                                                <div class="mt-auto">
+                                                    <div class="d-flex justify-content-between small text-muted mb-1">
+                                                        <span>Progress</span>
+                                                        <span th:text="${enrollment.progress} + '%'"></span>
+                                                    </div>
+                                                    <div class="progress mb-3" style="height: 8px;">
+                                                        <div class="progress-bar" role="progressbar"
+                                                             th:style="'width: ' + ${enrollment.progress} + '%;'"
+                                                             th:classappend="${enrollment.progress == 100} ? 'bg-success' : 'bg-primary'"
+                                                             th:attr="aria-valuenow=${enrollment.progress}"
+                                                             aria-valuemin="0" aria-valuemax="100">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <span class="btn btn-sm position-relative z-index-2"
+                                                              th:classappend="${enrollment.progress == 0} ? 'btn-primary' : 'btn-outline-primary'">
+                                                            <i class="bi" th:classappend="${enrollment.progress == 0} ? 'bi-play' : 'bi-arrow-right'"></i>
+                                                            <span th:text="${enrollment.progress == 0} ? 'Start Course' : 'Continue'"></span>
+                                                        </span>
+                                                        <small class="text-muted">
+                                                            <i class="bi bi-collection"></i>
+                                                            <span th:text="${enrollment.course.modules.size()} + ' modules'"></span>
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="row row-cols-1 row-cols-md-2 g-4" th:unless="${courses.empty}">
-                            <div th:each="course : ${courses}" class="col">
-                                <div class="card h-100 progress-card">
-                                    <div class="card-body d-flex flex-column">
-                                        <div class="d-flex justify-content-between align-items-start mb-2">
-                                            <h5 class="card-title mb-0" th:text="${course.title}"></h5>
-                                            <span class="badge bg-info rounded-pill" th:text="${course.level}"></span>
-                                        </div>
-                                        <p class="card-text text-muted small mb-3" th:text="${course.shortDescription ?: course.description}"></p>
-                                        <div class="d-flex justify-content-between align-items-center mt-auto">
-                                            <a th:href="@{'/courses/' + ${course.id}}" class="btn btn-sm btn-outline-primary">
-                                                <i class="bi bi-eye me-1"></i>View
-                                            </a>
-                                            <div>
-                                                <small class="text-muted me-2" th:text="${course.modules.size()} + ' modules'"></small>
-                                                <small class="text-muted" th:text="${enrollmentService.getEnrollmentsByCourse(course).size()} + ' students'"></small>
+
+                        <!-- Admin View -->
+                        <div th:if="${user.role == 'ADMIN'}">
+                            <div th:if="${courses.empty}" class="alert alert-info mb-0">
+                                <i class="bi bi-info-circle me-2"></i>
+                                You haven't created any courses yet.
+                                <a th:href="@{/courses/create}" class="alert-link">Create your first course</a>
+                            </div>
+
+                            <div class="row row-cols-1 row-cols-md-2 g-4" th:unless="${courses.empty}">
+                                <div th:each="course : ${courses}" class="col">
+                                    <div class="card h-100 progress-card shadow-sm">
+                                        <div class="card-body d-flex flex-column">
+                                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                                <h5 class="card-title mb-0">
+                                                    <a th:href="@{'/courses/' + ${course.id}}" class="text-decoration-none text-dark"
+                                                       th:text="${course.title}"></a>
+                                                </h5>
+                                                <span class="badge rounded-pill"
+                                                      th:text="${course.level}"
+                                                      th:classappend="${course.level == 'Advanced'} ? 'bg-danger' :
+                                                                      ${course.level == 'Intermediate'} ? 'bg-warning text-dark' : 'bg-info'">
+                                                </span>
+                                            </div>
+
+                                            <p class="card-text text-muted small mb-3"
+                                               th:text="${course.shortDescription ?: #strings.abbreviate(course.description, 100)}">
+                                            </p>
+
+                                            <div class="mt-auto">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <a th:href="@{'/courses/' + ${course.id}}" class="btn btn-sm btn-outline-primary">
+                                                        <i class="bi bi-eye me-1"></i> View Details
+                                                    </a>
+                                                    <div>
+                                                        <small class="text-muted me-2">
+                                                            <i class="bi bi-collection"></i>
+                                                            <span th:text="${course.modules.size()}"></span>
+                                                        </small>
+                                                        <small class="text-muted">
+                                                            <i class="bi bi-people"></i>
+                                                            <span th:text="${enrollmentService.getEnrollmentsByCourse(course).size()}"></span>
+                                                        </small>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -359,7 +403,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
 
             <!-- Student Specific Sections -->
             <div th:if="${user?.role == 'STUDENT'}">
