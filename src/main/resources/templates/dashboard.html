@@ -16,6 +16,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.css">
 
+    <!-- JavaScript imports (IMPORTANT: Must be placed just before </body>) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+            crossorigin="anonymous" defer></script>
 
     <style>
         :root {
@@ -38,6 +42,16 @@
         .navbar {
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
+
+        .btn-outline-light {
+    color: #fff;
+    border-color: rgba(255,255,255,0.5);
+}
+
+.btn-outline-light:hover {
+    background-color: rgba(255,255,255,0.1);
+}
+
 
         .card {
             border: none;
@@ -163,25 +177,25 @@
             </ul>
 
             <!-- Right-side user dropdown -->
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item dropdown" th:if="${user != null}">
-                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdownMenuLink"
-                       role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="bi bi-person-circle me-2"></i>
+            <ul class="navbar-nav ms-auto align-items-center" th:if="${user != null}">
+                <!-- User Info -->
+                <li class="nav-item me-3">
+
+                        <i class="bi bi-person-circle me-1"></i>
                         <span th:text="${user.firstName + ' ' + user.lastName}">User</span>
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="navbarDropdownMenuLink">
-                        <li><a class="dropdown-item" th:href="@{/profile}"><i class="bi bi-person me-2"></i> Profile</a></li>
-                        <li><a class="dropdown-item" th:href="@{/settings}"><i class="bi bi-gear me-2"></i> Settings</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li>
-                            <form th:action="@{/logout}" method="post" class="px-3 py-1">
-                                <button type="submit" class="dropdown-item btn btn-link p-0 border-0 text-start w-100">
-                                    <i class="bi bi-box-arrow-right me-2"></i> Logout
-                                </button>
-                            </form>
-                        </li>
-                    </ul>
+                </li>
+
+                <!-- Logout Button -->
+                <li class="nav-item">
+                    <form th:action="@{/logout}" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-outline-light btn-sm">
+                            <i class="bi bi-box-arrow-right me-1"></i> Logout
+                        </button>
+                    </form>
+                </li>
+            </ul>
+
                 </li>
             </ul>
         </div>
@@ -323,7 +337,7 @@
                                             <h5 class="card-title mb-0" th:text="${enrollment.course.title}"></h5>
                                             <span class="badge bg-info rounded-pill" th:text="${enrollment.course.level}"></span>
                                         </div>
-                                        <p class="card-text text-muted small mb-3" th:text="${enrollment.course.shortDescription ?: enrollment.course.description}"></p>
+                                        <p class="card-text text-muted small mb-3" th:text="${enrollment.course.description ?: enrollment.course.description}"></p>
                                         <div class="mb-3">
                                             <div class="d-flex justify-content-between small text-muted mb-1">
                                                 <span>Progress</span>
@@ -364,14 +378,15 @@
                                             <h5 class="card-title mb-0" th:text="${course.title}"></h5>
                                             <span class="badge bg-info rounded-pill" th:text="${course.level}"></span>
                                         </div>
-                                        <p class="card-text text-muted small mb-3" th:text="${course.shortDescription ?: course.description}"></p>
+                                        <p class="card-text text-muted small mb-3" th:text="${course.description ?: course.description}"></p>
                                         <div class="d-flex justify-content-between align-items-center mt-auto">
                                             <a th:href="@{'/courses/' + ${course.id}}" class="btn btn-sm btn-outline-primary">
                                                 <i class="bi bi-eye me-1"></i>View
                                             </a>
                                             <div>
                                                 <small class="text-muted me-2" th:text="${course.modules.size()} + ' modules'"></small>
-                                                <small class="text-muted" th:text="${enrollmentService.getEnrollmentsByCourse(course).size()} + ' students'"></small>
+                                                <small class="text-muted" th:text="${course.enrollments.size()}
++ ' students'"></small>
                                             </div>
                                         </div>
                                     </div>
@@ -555,10 +570,14 @@
         </div>
     </div>
 </div>
-<!-- JavaScript imports (IMPORTANT: Must be placed just before </body>) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
-        crossorigin="anonymous"></script>
+
+<script>
+    if (typeof bootstrap === 'undefined') {
+        console.error('Bootstrap JS not loaded!');
+    } else {
+        console.log('Bootstrap loaded successfully', bootstrap);
+    }
+</script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
 
 <!-- Inline Script -->
@@ -571,7 +590,11 @@
             return new bootstrap.Tooltip(tooltipTriggerEl);
         });
 
-        // Dropdowns auto-initialize with Bootstrap 5's bundle, no manual init required
+           // Initialize dropdowns
+    var dropdowns = document.querySelectorAll('.dropdown-toggle');
+    dropdowns.forEach(function(dropdown) {
+        new bootstrap.Dropdown(dropdown);
+    });
 
         // Time spent chart
         const timeChartEl = document.getElementById('timeChart');

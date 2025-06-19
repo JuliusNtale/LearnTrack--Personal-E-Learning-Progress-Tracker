@@ -184,11 +184,13 @@ public class CourseController {
         return "redirect:/courses/" + courseId + "/modules/" + moduleId;
     }
 
-    // Assignment-related methods
     @GetMapping("/{courseId}/assignments/create")
-    public String showCreateAssignmentForm(@PathVariable Long courseId,
-                                           Model model) {
-        model.addAttribute("assignment", new Assignment());
+    public String showCreateAssignmentForm(@PathVariable Long courseId, Model model) {
+        Assignment assignment = new Assignment();
+        logger.info("Creating new assignment form with courseId: {}", courseId);
+        logger.info("Assignment object: {}", assignment);
+
+        model.addAttribute("assignment", assignment);
         model.addAttribute("courseId", courseId);
         return "assignments/create";
     }
