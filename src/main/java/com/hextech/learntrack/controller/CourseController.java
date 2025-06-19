@@ -23,6 +23,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/courses")  // Changed from "/templates/courses" for consistency
@@ -263,6 +264,30 @@ public class CourseController {
         }
 
         return "assignments/view";
+    }
+
+    @GetMapping("/available")
+    public String showAvailableCourses(@AuthenticationPrincipal User user, Model model) {
+        try {
+            // Get all courses
+            List<Course> allCourses = courseService.getAllCourses();
+
+            // Get courses the user is already enrolled in
+            List<Course> enrolledCourses = enrollmentService.getEnrolledCourses(user);
+
+            // Filter out enrolled courses
+            List<Course> availableCourses = allCourses.stream()
+                    .filter(course -> !enrolledCourses.contains(course))
+                    .collect(Collectors.toList());
+
+            model.addAttribute("courses", availableCourses);
+            model.addAttribute("user", user);
+            return "courses/available";
+        } catch (Exception e) {
+            logger.error("Error loading available courses", e);
+            model.addAttribute("error", "Failed to load available courses");
+            return "error";
+        }
     }
 
     // File download method
