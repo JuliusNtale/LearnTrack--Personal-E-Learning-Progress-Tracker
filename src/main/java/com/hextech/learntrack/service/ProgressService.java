@@ -191,21 +191,4 @@ public class ProgressService {
             throw new IllegalArgumentException("Time spent cannot be negative");
         }
     }
-
-    public Map<Long, Double> getLessonProgress(User user, Course course) {
-        List<LessonProgress> progresses = lessonProgressRepository.findByUserAndCourse(user, course);
-
-        return progresses.stream()
-                .collect(Collectors.toMap(
-                        progress -> progress.getLesson().getId(),
-                        progress -> {
-                            // Calculate completion percentage
-                            if (progress.isCompleted()) {
-                                return 100.0;
-                            }
-                            // Optional: Add logic for partial completion if needed
-                            return 0.0;
-                        }
-                ));
-    }
 }

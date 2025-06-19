@@ -2,7 +2,6 @@ package com.hextech.learntrack.controller;
 
 import com.hextech.learntrack.model.User;
 import com.hextech.learntrack.service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -10,8 +9,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.UUID;
 
 @Controller
 public class AuthController {
@@ -49,7 +46,6 @@ public class AuthController {
         userService.registerUser(user, passwordEncoder);
         return "redirect:/login?registered";
     }
-
 
     @GetMapping("/forgot-password")
     public String showForgotPasswordForm() {

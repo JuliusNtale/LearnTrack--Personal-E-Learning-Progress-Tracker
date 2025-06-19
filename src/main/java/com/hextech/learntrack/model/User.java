@@ -34,16 +34,8 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private boolean enabled = true;
 
-    @Column(unique = true)
-    private String verificationToken;
-
     @Column(nullable = false)
     private String role = "STUDENT"; // STUDENT or ADMIN
-
-    @Column(name = "is_verified", nullable = false)
-    private boolean isVerified = false;
-
-
 
     // UserDetails interface methods
     @Override

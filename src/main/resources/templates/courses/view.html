@@ -2,134 +2,48 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${course.title} + ' | LearnTrack'"></title>
+    <title>Create Course - LearnTrack</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
-    <style>
-        .module-card {
-            transition: transform 0.2s;
-        }
-        .module-card:hover {
-            transform: translateY(-5px);
-        }
-        .lesson-item {
-            border-left: 3px solid #0d6efd;
-        }
-        .completed-lesson {
-            border-left: 3px solid #198754;
-        }
-    </style>
 </head>
 <body>
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 
-<div class="container py-4">
-    <!-- Course Header -->
-    <div class="card mb-4 border-0 shadow-sm">
-        <div class="card-body">
-            <div class="d-flex justify-content-between align-items-start">
-                <div>
-                    <h1 th:text="${course.title}"></h1>
-                    <p class="lead" th:text="${course.description}"></p>
-                    <span class="badge bg-info" th:text="${course.level}"></span>
-                </div>
-
-                <div th:if="${user.role == 'STUDENT'}">
-                    <div th:if="${isEnrolled}">
-                        <div class="d-flex justify-content-between small text-muted mb-1">
-                            <span>Your Progress</span>
-                            <span th:text="${enrollment.progress} + '%'"></span>
-                        </div>
-                        <div class="progress" style="height: 8px; width: 150px;">
-                            <div class="progress-bar" role="progressbar"
-                                 th:style="'width: ' + ${enrollment.progress} + '%;'"
-                                 th:classappend="${enrollment.progress == 100} ? 'bg-success' : 'bg-primary'"
-                                 aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                    </div>
-                    <div th:unless="${isEnrolled}">
-                        <a th:href="@{'/courses/' + ${course.id} + '/enroll'}"
-                           class="btn btn-primary">
-                            <i class="bi bi-bookmark-plus"></i> Enroll Now
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Course Content -->
-    <div class="row">
-        <!-- Modules List -->
-        <div class="col-lg-8">
-            <div class="card mb-4 border-0 shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0"><i class="bi bi-list-check me-2"></i>Course Modules</h5>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Create New Course</h4>
                 </div>
                 <div class="card-body">
-                    <div th:each="module : ${modules}" class="mb-4">
-                        <div class="card module-card mb-3">
-                            <div class="card-body">
-                                <h5 th:text="${module.title}"></h5>
-                                <p class="text-muted small" th:text="${module.description}"></p>
-
-                                <div class="list-group list-group-flush">
-                                    <a th:each="lesson : ${module.lessons}"
-                                       th:href="@{'/courses/' + ${course.id} + '/modules/' + ${module.id} + '/lessons/' + ${lesson.id}}"
-                                       th:classappend="${lessonProgress != null && lessonProgress.containsKey(lesson.id)} ? 'completed-lesson' : ''"
-                                       class="list-group-item list-group-item-action lesson-item">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <div>
-                                                <i class="bi"
-                                                   th:classappend="${lesson.type == 'VIDEO'} ? 'bi-play-circle' :
-                                                                      ${lesson.type == 'QUIZ'} ? 'bi-question-circle' :
-                                                                      'bi-journal-text'"></i>
-                                                <span th:text="${lesson.title}" class="ms-2"></span>
-                                            </div>
-                                            <div th:if="${lessonProgress != null && lessonProgress.containsKey(lesson.id)}">
-                                                    <span class="badge bg-success">
-                                                        <i class="bi bi-check-circle"></i> Completed
-                                                    </span>
-                                            </div>
-                                            <i class="bi bi-chevron-right"></i>
-                                        </div>
-                                    </a>
-                                </div>
+                    <form th:action="@{/courses/create}" method="post" th:object="${course}">
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Course Title</label>
+                            <input type="text" class="form-control" id="title" th:field="*{title}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" th:field="*{description}" rows="3" required></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="category" class="form-label">Category</label>
+                                <input type="text" class="form-control" id="category" th:field="*{category}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="level" class="form-label">Level</label>
+                                <select class="form-select" id="level" th:field="*{level}" required>
+                                    <option value="Beginner">Beginner</option>
+                                    <option value="Intermediate">Intermediate</option>
+                                    <option value="Advanced">Advanced</option>
+                                </select>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Course Sidebar -->
-        <div class="col-lg-4">
-            <div class="card mb-4 border-0 shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>Course Details</h5>
-                </div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <h6>Instructor</h6>
-                        <p th:text="${course.user.firstName} + ' ' + ${course.user.lastName}"></p>
-                    </div>
-
-                    <div class="mb-3">
-                        <h6>Category</h6>
-                        <span class="badge bg-secondary" th:text="${course.category}"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <h6>Total Modules</h6>
-                        <p th:text="${modules.size()}"></p>
-                    </div>
-
-                    <div th:if="${user.role == 'STUDENT' && isEnrolled}">
-                        <a th:href="@{'/courses/' + ${course.id} + '/assignments'}"
-                           class="btn btn-outline-primary w-100 mb-2">
-                            <i class="bi bi-journal-check"></i> View Assignments
-                        </a>
-                    </div>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a th:href="@{/dashboard}" class="btn btn-secondary me-md-2">Cancel</a>
+                            <button type="submit" class="btn btn-primary">Create Course</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

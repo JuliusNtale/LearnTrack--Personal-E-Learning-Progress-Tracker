@@ -18,15 +18,13 @@ public class Enrollment {
     @Column(nullable = false)
     private Date enrollmentDate = new Date();
 
-
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "course_id", nullable = false)
     private Course course;
-
 
     @Column(nullable = false)
     private double progress = 0.0;
