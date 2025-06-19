@@ -31,23 +31,26 @@
                         <td th:text="${user.firstName} + ' ' + ${user.lastName}"></td>
                         <td th:text="${user.email}"></td>
                         <td>
-                            <select class="form-select form-select-sm"
+                            <select class="form-select form-select-sm rounded-pill bg-light border-1"
                                     th:data-user-id="${user.id}"
-                                    onchange="changeRole(this)"
-                                    th:value="${user.role}">
-                                <option value="STUDENT">Student</option>
-                                <option value="ADMIN">Admin</option>
+                                    onchange="changeRole(this)">
+                                <option value="STUDENT" th:selected="${user.role == 'STUDENT'}">Student</option>
+                                <option value="ADMIN" th:selected="${user.role == 'ADMIN'}">Admin</option>
                             </select>
                         </td>
+
+
                         <td>
                             <span th:if="${user.enabled}" class="badge bg-success">Active</span>
                             <span th:if="${!user.enabled}" class="badge bg-danger">Disabled</span>
                         </td>
                         <td>
-                            <button class="btn btn-sm"
-                                    th:classappend="${user.enabled} ? 'btn-danger' : 'btn-success'"
+                            <button class="btn btn-sm rounded-pill px-3"
+                                    th:classappend="${user.enabled} ? 'btn-outline-danger' : 'btn-outline-success'"
                                     th:text="${user.enabled} ? 'Disable' : 'Enable'"
-                                    th:onclick="'toggleStatus(' + ${user.id} + ')'"></button>
+                                    th:onclick="'toggleStatus(' + ${user.id} + ')'">
+                            </button>
+
                         </td>
                     </tr>
                     </tbody>
@@ -61,10 +64,7 @@
 <script>
     function toggleStatus(userId) {
         fetch('/admin/users/' + userId + '/toggle-status', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            }
+            method: 'POST'
         }).then(response => {
             if (response.ok) {
                 location.reload();
@@ -89,5 +89,6 @@
         });
     }
 </script>
+
 </body>
 </html>
