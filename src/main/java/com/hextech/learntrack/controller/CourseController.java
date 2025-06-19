@@ -2,6 +2,8 @@ package com.hextech.learntrack.controller;
 
 import com.hextech.learntrack.model.*;
 import com.hextech.learntrack.service.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -38,6 +40,27 @@ public class CourseController {
     private AssignmentService assignmentService;
     @Autowired
     private SubmissionService submissionService;
+
+
+    private static final Logger logger = LoggerFactory.getLogger(CourseController.class);
+
+
+    @GetMapping
+    public String listCourses(@AuthenticationPrincipal User user, Model model) {
+        try {
+            model.addAttribute("user", user); // Add this line
+            if ("ADMIN".equals(user.getRole())) {
+                model.addAttribute("courses", courseService.getCoursesByUser(user));
+            } else {
+                model.addAttribute("courses", enrollmentService.getEnrolledCourses(user));
+            }
+            return "courses/list";
+        } catch (Exception e) {
+            logger.error("Error loading courses", e);
+            model.addAttribute("error", "Failed to load courses");
+            return "error";
+        }
+    }
 
     // Course-related methods
     @GetMapping("/create")

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.hextech.learntrack.model.Course;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class EnrollmentService {
@@ -44,5 +45,13 @@ public class EnrollmentService {
 
     public void unenrollUser(Long enrollmentId) {
         enrollmentRepository.deleteById(enrollmentId);
+    }
+
+    // Add this method to your EnrollmentService class
+    public List<Course> getEnrolledCourses(User user) {
+        return enrollmentRepository.findByUser(user)
+                .stream()
+                .map(Enrollment::getCourse)
+                .collect(Collectors.toList());
     }
 }

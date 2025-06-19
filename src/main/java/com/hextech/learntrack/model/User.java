@@ -35,7 +35,7 @@ public class User implements UserDetails {
     private boolean enabled = true;
 
     @Column(nullable = false)
-    private String role = "STUDENT"; // STUDENT or ADMIN
+    private String role ; // STUDENT or ADMIN
 
     // UserDetails interface methods
     @Override

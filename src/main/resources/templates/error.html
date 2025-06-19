@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Error</title>
+</head>
+<body>
+<div class="container mt-5">
+    <div class="alert alert-danger">
+        <h4 class="alert-heading">An Error Occurred</h4>
+        <p th:text="${error != null} ? ${error} : 'Unknown error'"></p>
+        <hr>
+        <a th:href="@{/dashboard}" class="btn btn-primary">Back to Dashboard</a>
+    </div>
+</div>
+</body>
+</html>
