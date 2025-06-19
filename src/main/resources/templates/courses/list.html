@@ -27,6 +27,9 @@
                             <a class="text-decoration-none" th:href="@{/courses/{id}(id=${course.id})}" th:text="${course.title}"></a>
                         </h5>
                         <p class="card-text text-muted" th:text="${course.description}"></p>
+                        <div class="mt-2">
+                            <a th:href="@{/courses/{id}/edit(id=${course.id})}" class="btn btn-sm btn-outline-primary">Edit</a>
+                        </div>
                     </div>
                 </div>
             </div>

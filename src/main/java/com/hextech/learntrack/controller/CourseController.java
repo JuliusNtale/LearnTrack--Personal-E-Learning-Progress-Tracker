@@ -9,6 +9,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -140,6 +141,50 @@ public class CourseController {
         }
 
         return "modules/view";
+    }
+
+    // Add these methods to CourseController.java
+
+    @GetMapping("/{id}/edit")
+    public String showEditCourseForm(@PathVariable Long id, Model model) {
+        Course course = courseService.getCourseById(id).orElseThrow();
+        model.addAttribute("course", course);
+        return "courses/edit";
+    }
+
+    @PostMapping("/{id}/edit")
+    public String updateCourse(@PathVariable Long id,
+                               @ModelAttribute Course updatedCourse,
+                               @AuthenticationPrincipal User user) {
+        Course existingCourse = courseService.getCourseById(id).orElseThrow();
+
+        // Only allow the course owner to edit
+        if (!existingCourse.getUser().getId().equals(user.getId())) {
+            throw new AccessDeniedException("You don't have permission to edit this course");
+        }
+
+        // Update the existing course with new values
+        existingCourse.setTitle(updatedCourse.getTitle());
+        existingCourse.setDescription(updatedCourse.getDescription());
+        existingCourse.setCategory(updatedCourse.getCategory());
+        existingCourse.setLevel(updatedCourse.getLevel());
+
+        courseService.updateCourse(existingCourse);
+        return "redirect:/dashboard";
+    }
+
+    @GetMapping("/{id}/delete")
+    public String deleteCourse(@PathVariable Long id,
+                               @AuthenticationPrincipal User user) {
+        Course course = courseService.getCourseById(id).orElseThrow();
+
+        // Only allow the course owner to delete
+        if (!course.getUser().getId().equals(user.getId())) {
+            throw new AccessDeniedException("You don't have permission to delete this course");
+        }
+
+        courseService.deleteCourse(id);
+        return "redirect:/dashboard";
     }
 
     // Lesson-related methods (single createLesson method combining both functionalities)
