@@ -136,6 +136,62 @@
                 height: 200px;
             }
         }
+         /* Enhanced card styling */
+    .card {
+        transition: all 0.3s ease;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
+        font-weight: 600;
+    }
+
+    /* Compact sidebar */
+    .sidebar-card .list-group-item {
+        padding: 0.75rem 1.25rem;
+        border-left: none;
+        border-right: none;
+    }
+
+    .sidebar-card .list-group-item:first-child {
+        border-top: none;
+    }
+
+    .sidebar-card .list-group-item:last-child {
+        border-bottom: none;
+    }
+
+    /* Loading spinner for charts */
+    .chart-loading {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    /* Better stat cards */
+    .stat-card {
+        border-left: 4px solid var(--primary-color);
+        transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-3px);
+    }
+
+    /* Avatar improvements */
+    .avatar-circle {
+        transition: all 0.3s ease;
+    }
+
+    .avatar-circle:hover {
+        transform: scale(1.05);
+    }
     </style>
 </head>
 <body>
@@ -380,9 +436,7 @@
                                         </div>
                                         <p class="card-text text-muted small mb-3" th:text="${course.description ?: course.description}"></p>
                                         <div class="d-flex justify-content-between align-items-center mt-auto">
-                                            <a th:href="@{'/courses/' + ${course.id}}" class="btn btn-sm btn-outline-primary">
-                                                <i class="bi bi-eye me-1"></i>View
-                                            </a>
+
                                             <div>
                                                 <small class="text-muted me-2" th:text="${course.modules.size()} + ' modules'"></small>
                                                 <small class="text-muted" th:text="${course.enrollments.size()}
@@ -595,6 +649,24 @@
     dropdowns.forEach(function(dropdown) {
         new bootstrap.Dropdown(dropdown);
     });
+
+
+        // Show loading state for charts
+        const showChartLoading = (chartElement) => {
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'chart-loading';
+            loadingDiv.innerHTML = '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>';
+            chartElement.parentNode.style.position = 'relative';
+            chartElement.parentNode.appendChild(loadingDiv);
+        };
+
+       // Remove loading state
+        const hideChartLoading = (chartElement) => {
+            const loadingDiv = chartElement.parentNode.querySelector('.chart-loading');
+            if (loadingDiv) {
+                loadingDiv.remove();
+            }
+        };
 
         // Time spent chart
         const timeChartEl = document.getElementById('timeChart');
