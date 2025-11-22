@@ -328,6 +328,27 @@
                     <a href="#" class="list-group-item list-group-item-action d-flex align-items-center" th:if="${user.role == 'STUDENT'}">
                         <i class="bi bi-journal-check me-2"></i>Assignments
                     </a>
+                    <!-- Report Export Options -->
+                    <div class="dropdown" th:if="${user.role == 'STUDENT'}">
+                        <a href="#" class="list-group-item list-group-item-action d-flex align-items-center dropdown-toggle" 
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-download me-2"></i>Export Reports
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" th:href="@{/reports/csv}">
+                                <i class="bi bi-file-earmark-spreadsheet me-2"></i>CSV Report
+                            </a></li>
+                            <li><a class="dropdown-item" th:href="@{/reports/csv/detailed}">
+                                <i class="bi bi-file-earmark-text me-2"></i>Detailed CSV
+                            </a></li>
+                            <li><a class="dropdown-item" th:href="@{/reports/view/pdf}" target="_blank">
+                                <i class="bi bi-file-earmark-pdf me-2"></i>View PDF Report
+                            </a></li>
+                            <li><a class="dropdown-item" th:href="@{/reports/pdf}">
+                                <i class="bi bi-download me-2"></i>Download PDF
+                            </a></li>
+                        </ul>
+                    </div>
                     <a th:href="@{/admin/users}" class="list-group-item list-group-item-action d-flex align-items-center"
                        th:if="${user.role == 'ADMIN'}">
                         <i class="bi bi-people me-2"></i>Manage Users

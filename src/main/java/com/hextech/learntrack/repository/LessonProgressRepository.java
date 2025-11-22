@@ -17,6 +17,7 @@ import java.util.Optional;
 
 public interface LessonProgressRepository extends JpaRepository<LessonProgress, Long> {
     Optional<LessonProgress> findByEnrollmentAndLesson(Enrollment enrollment, Lesson lesson);
+    List<LessonProgress> findByEnrollment(Enrollment enrollment);
     long countByEnrollmentAndCompleted(Enrollment enrollment, boolean completed);
 
     @Query("SELECT COUNT(lp) FROM LessonProgress lp WHERE lp.enrollment IN :enrollments AND lp.completed = :completed")

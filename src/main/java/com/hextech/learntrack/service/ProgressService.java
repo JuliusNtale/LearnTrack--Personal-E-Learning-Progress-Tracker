@@ -191,4 +191,92 @@ public class ProgressService {
             throw new IllegalArgumentException("Time spent cannot be negative");
         }
     }
+
+    /**
+     * Get total study time for a user in minutes
+     */
+    public int getTotalStudyTime(User user) {
+        List<Enrollment> enrollments = enrollmentService.getEnrollmentsByUser(user);
+        return enrollments.stream()
+                .flatMap(enrollment -> lessonProgressRepository.findByEnrollment(enrollment).stream())
+                .mapToInt(LessonProgress::getTimeSpentMinutes)
+                .sum();
+    }
+
+    /**
+     * Get the count of completed courses for a user
+     */
+    public int getCompletedCoursesCount(User user) {
+        List<Enrollment> enrollments = enrollmentService.getEnrollmentsByUser(user);
+        return (int) enrollments.stream()
+                .filter(enrollment -> enrollment.getProgress() >= 100)
+                .count();
+    }
+
+    /**
+     * Get the last activity date for a user in a specific course
+     */
+    public LocalDateTime getLastActivityDate(User user, Course course) {
+        Optional<Enrollment> enrollmentOpt = enrollmentService.getEnrollmentByUserAndCourse(user, course);
+        if (enrollmentOpt.isPresent()) {
+            List<LessonProgress> progresses = lessonProgressRepository.findByEnrollment(enrollmentOpt.get());
+            return progresses.stream()
+                    .map(LessonProgress::getCompletionDate)
+                    .filter(Objects::nonNull)
+                    .max(LocalDateTime::compareTo)
+                    .orElse(null);
+        }
+        return null;
+    }
+
+    /**
+     * Check if a course is completed and trigger completion notification
+     */
+    public void checkCourseCompletion(User user, Course course) {
+        Optional<Enrollment> enrollmentOpt = enrollmentService.getEnrollmentByUserAndCourse(user, course);
+        if (enrollmentOpt.isPresent() && enrollmentOpt.get().getProgress() >= 100) {
+            // Course is completed - this would be called by the notification service
+            // or integrated into the lesson completion logic
+        }
+    }
+
+    /**
+     * Get total time spent for a specific enrollment
+     */
+    public int getTotalTimeSpentForEnrollment(Enrollment enrollment) {
+        List<LessonProgress> progresses = lessonProgressRepository.findByEnrollment(enrollment);
+        return progresses.stream()
+                .mapToInt(LessonProgress::getTimeSpentMinutes)
+                .sum();
+    }
+
+    /**
+     * Get detailed progress report data
+     */
+    public List<Object[]> getDetailedProgressReport(User user) {
+        List<Enrollment> enrollments = enrollmentService.getEnrollmentsByUser(user);
+        if (enrollments.isEmpty()) {
+            return Collections.emptyList(); // No enrollments found
+        }
+
+        // Fetch lesson progress for all enrollments
+        // Assuming the repository method returns a list of Object arrays with the required fields
+        List<Object[]> reportData = new ArrayList<>();
+
+        for (Enrollment enrollment : enrollments) {
+            List<LessonProgress> progresses = lessonProgressRepository.findByEnrollment(enrollment);
+            for (LessonProgress progress : progresses) {
+                Object[] row = new Object[6];
+                row[0] = enrollment.getCourse().getTitle(); // course_title
+                row[1] = progress.getLesson().getModule().getTitle(); // module_title
+                row[2] = progress.getLesson().getTitle(); // lesson_title
+                row[3] = progress.isCompleted(); // completed
+                row[4] = progress.getCompletionDate(); // completion_date
+                row[5] = progress.getTimeSpentMinutes(); // time_spent
+                reportData.add(row);
+            }
+        }
+
+        return reportData;
+    }
 }
